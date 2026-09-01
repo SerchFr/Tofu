@@ -1,0 +1,10 @@
+username   = "PCU-XXXXXXXX"
+project_id = "PCP-XXXXXXXX"
+password   = "YOUR_PASSWORD"
+
+vm_name       = "my-first-vm"
+image_name    = "Debian 12 bookworm"
+flavor_name   = "a1-ram2-disk20-perf1"
+network_name  = "ext-net1"
+keypair_name  = "opentofu-key"
+ssh_public_key = "~/.ssh/id_ed25519.pub"
