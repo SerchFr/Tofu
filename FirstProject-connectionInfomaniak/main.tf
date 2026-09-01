@@ -7,6 +7,22 @@ terraform {
       version = "~> 3.4"
     }
   }
+  backend "s3" {
+    bucket   = "my-first-container"
+    key      = "My-First-S3/terraform.tfstate1" # Path and filename inside the bucket
+    region   = "us-east-1"               # Infomaniak ignores this, but a value is required by the S3 plugin
+
+    # Infomaniak S3 custom endpoints
+    endpoint     = "https://s3.pub1.infomaniak.cloud"
+    #sts_endpoint = "https://infomaniak.cloud"
+
+    use_path_style = true
+    # Required settings for non-AWS S3 providers
+    skip_credentials_validation = true
+    skip_region_validation      = true
+    skip_metadata_api_check     = true
+    #use_path_style             = true # Forces path-style URLs (bucket.endpoint vs endpoint/bucket)
+  }
 }
 
 provider "openstack" {
