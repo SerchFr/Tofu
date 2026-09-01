@@ -36,7 +36,7 @@ variable "vm_name" {
 variable "image_name" {
   description = "Image available in Infomaniak"
   type        = string
-  default     = "Debian 12 bookworm"
+  default     = "Debian 10 buster"
 }
 
 variable "flavor_name" {
