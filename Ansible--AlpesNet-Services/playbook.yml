@@ -14,3 +14,4 @@
     - docker
     - docker-nginx
     - nginx
+    - docker-LDAP

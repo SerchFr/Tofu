@@ -1,0 +1,49 @@
+#!/bin/bash
+# ============================================================
+# Auteur : [Sergio MARTINEZ] — Date : 2026-08-03
+# Module : Docker compose for LDAP Account Manager
+# 
+# Il crée un instance docker LDAP Account Manager	: 
+#
+# Docker compose
+#   1. Récupere l'image osixia/openldap
+#   2. Configure l'environnement AlpesNet.local
+#   3. Configure les ports   389:3890 et 636:6360
+#   4. Les volumes pour la persistence data, config et backup
+#
+# Usage :
+#       docker compose up -d
+#
+# Durée d'exécution : ~1 min le temps de télécharger l'image docker
+# ============================================================
+
+services:
+  lam:
+    image: ldapaccountmanager/lam:latest
+    container_name: lam
+    hostname: lam.AlpesNet.local
+    restart: unless-stopped
+    
+    networks:
+      - ldap-network
+      
+    environment:
+      #LAM_LANG: "en_US"
+      LDAP_SERVER: ldap://openldap:3890
+      LDAP_DOMAIN: AlpesNet.local
+      LDAP_PORT: "3890"
+
+    depends_on: []
+      
+    ports:
+      - "8080:80"
+      
+    volumes:
+      - lam_config:/var/lib/ldap-account-manager/config
+
+networks:
+  ldap-network:
+    external: true
+    
+volumes:
+  lam_config:

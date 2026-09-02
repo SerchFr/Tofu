@@ -10,13 +10,13 @@
     state: present
 
 - name: Déployer la configuration du site
-  template:
+  ansible.builtin.template:
     src: nginx-site.conf.j2
     dest: /etc/nginx/sites-available/default
     owner: root
     group: root
     mode: "0644"
-  notify: Recharger nginx
+  notify: Restart nginx
 
 - name: Créer le répertoire racine du site
   file:
