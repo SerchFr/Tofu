@@ -12,3 +12,5 @@
 
   roles:
     - docker
+    - docker-nginx
+    - nginx
