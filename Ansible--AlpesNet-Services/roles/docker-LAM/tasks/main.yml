@@ -1,0 +1,22 @@
+---
+- name: Create external ldap-network
+  community.docker.docker_network:
+    name: ldap-network
+    state: present
+    
+- name: Create ldap deployment directory
+  ansible.builtin.file:
+    path: /opt/ldap
+    state: directory
+    mode: "0755"
+
+- name: Copy docker-compose file for LDAP
+  ansible.builtin.copy:        # or template: if it has Jinja variables
+    src: docker-compose.yml
+    dest: /opt/ldap/docker-compose.yml
+    mode: "0644"
+
+- name: Start LDAP containers
+  community.docker.docker_compose_v2:
+    project_src: /opt/ldap
+    state: present

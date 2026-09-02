@@ -1,9 +1,9 @@
 #!/bin/bash
 # ============================================================
 # Auteur : [Sergio MARTINEZ] — Date : 2026-08-03
-# Module : Docker compose for LDAP Account Manager
+# Module : Docker compose for openLDAP
 # 
-# Il crée un instance docker LDAP Account Manager	: 
+# Il crée un instance docker : 
 #
 # Docker compose
 #   1. Récupere l'image osixia/openldap
@@ -18,32 +18,51 @@
 # ============================================================
 
 services:
-  lam:
-    image: ldapaccountmanager/lam:latest
-    container_name: lam
-    hostname: lam.AlpesNet.local
+  openldap:
+    image: osixia/openldap:2.6.10-alpha
+    container_name: openldap
+    hostname: ldap.AlpesNet.local
     restart: unless-stopped
     
+    ports:
+      - "389:3890"
+      - "636:6360"
+      
     networks:
       - ldap-network
-      
+    
     environment:
-      #LAM_LANG: "en_US"
-      LDAP_SERVER: ldap://openldap:3890
-      LDAP_DOMAIN: AlpesNet.local
-      LDAP_PORT: "3890"
-
-    depends_on: []
+      OPENLDAP_BOOTSTRAP_ORGANIZATION: "AlpesNet Inc"
+      OPENLDAP_BOOTSTRAP_SUFFIX: "dc=AlpesNet,dc=local"
       
-    ports:
-      - "8080:80"
+      #LDAP_ADMIN_PASSWORD: "CampusNumerique2026"
+      #LDAP_CONFIG_PASSWORD: "CampusNumerique2026"
       
     volumes:
-      - lam_config:/var/lib/ldap-account-manager/config
+      - openldap-conf:/etc/openldap/slapd.d
+      - openldap-data:/var/lib/openldap/openldap-data
+      - openldap-backups:/var/lib/openldap/openldap-backups
 
 networks:
   ldap-network:
     external: true
     
 volumes:
-  lam_config:
+  openldap-conf:
+  openldap-data:
+  openldap-backups:
+
+
+
+
+
+#docker run --name openldap --hostname ldap.AlpesNet.local -p 389:3890 -p 636:6360 \
+#  -e OPENLDAP_BOOTSTRAP_ORGANIZATION="AlpesNet" \
+#  -e OPENLDAP_BOOTSTRAP_SUFFIX="dc=AlpesNet,dc=local" \
+#  -v openldap-conf:/etc/openldap/slapd.d \
+#  -v openldap-data:/var/lib/openldap/openldap-data \
+#  -v openldap-backups:/var/lib/openldap/openldap-backups \
+#  osixia/openldap
+  
+  
+  
