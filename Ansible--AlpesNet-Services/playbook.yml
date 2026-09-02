@@ -1,0 +1,14 @@
+---
+#- name: Configurer nginx sur la VM Infomaniak
+#  hosts: webserver
+#  become: true
+
+#  roles:
+#    - nginx
+    
+- name: Installer Docker et lancer un conteneur
+  hosts: webserver
+  become: true
+
+  roles:
+    - docker

@@ -1,0 +1,49 @@
+---
+- name: Mettre à jour le cache APT
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Installer nginx
+  apt:
+    name: nginx
+    state: present
+
+- name: Déployer la configuration du site
+  template:
+    src: nginx-site.conf.j2
+    dest: /etc/nginx/sites-available/default
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Recharger nginx
+
+- name: Créer le répertoire racine du site
+  file:
+    path: "{{ nginx_root }}"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: "0755"
+
+- name: Déployer une page d'accueil de test
+  template:
+    src: index.html.j2
+    dest: "{{ nginx_root }}/index.html"
+    owner: www-data
+    group: www-data
+    mode: "0644"
+
+- name: S'assurer que nginx est démarré et activé au boot
+  service:
+    name: nginx
+    state: started
+    enabled: true
+
+- name: Autoriser le trafic HTTP dans le pare-feu (ufw), si actif
+  ufw:
+    rule: allow
+    port: "{{ nginx_port }}"
+    proto: tcp
+  when: ansible_facts.services['ufw.service'] is defined
+  ignore_errors: true
