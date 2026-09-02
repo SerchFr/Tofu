@@ -8,13 +8,12 @@ terraform {
     }
   }
   backend "s3" {
-    bucket   = "my-first-container"
-    key      = "My-First-S3/terraform.tfstate1" # Path and filename inside the bucket
-    region   = "us-east-1"               # Infomaniak ignores this, but a value is required by the S3 plugin
+    bucket   = var.bucket_name
+    key      = var.bucket_repertory # Path and filename inside the bucket
+    region   = var.region
 
     # Infomaniak S3 custom endpoints
-    endpoint     = "https://s3.pub1.infomaniak.cloud"
-    #sts_endpoint = "https://infomaniak.cloud"
+    endpoint     = var.endpoint
 
     use_path_style = true
     # Required settings for non-AWS S3 providers
@@ -26,15 +25,8 @@ terraform {
 }
 
 provider "openstack" {
-#  auth_url    = var.auth_url
-#  region      = var.region
-#  user_name   = var.username
-#  tenant_name = var.project_id
-#  password    = var.password
-#  cloud       = "PCU-C3G3EWA"
-  #cloud = "/media/sergio/01DB9177DBBFFDD0/Cloud_ex/Infomaniak/PCU-C3G3EWA-clouds.yaml"
-  cloud = "PCP-C3G3EWA-dc3-a"
-  #clouds_yaml_path = "/media/sergio/01DB9177DBBFFDD0/Cloud_ex/Infomaniak/PCU-C3G3EWA-clouds.yaml"  
+#  cloud = "PCP-C3G3EWA-dc3-a"
+  cloud = var.project_id 
 }
 
 resource "openstack_compute_keypair_v2" "vm" {

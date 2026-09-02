@@ -4,10 +4,16 @@ variable "auth_url" {
   default     = "https://api.pub1.infomaniak.cloud/identity"
 }
 
+variable "endpoint" {
+  description = "Infomaniak OpenStack cutom endpoint"
+  type        = string
+  default     = "https://s3.pub1.infomaniak.cloud"
+}
+
 variable "region" {
   description = "Infomaniak OpenStack region"
   type        = string
-  default     = "dc3-a"
+  default     = "us-east-1"
 }
 
 variable "username" {
@@ -29,9 +35,23 @@ variable "password" {
 }
 
 variable "vm_name" {
+  description = "Name of the VM that will be created"
   type    = string
   default = "opentofu-vm"
 }
+
+variable "bucket_name" {
+  description = "Name of the bucket repository"
+  type    = string
+  default = "my-first-container"
+}
+
+variable "bucket_repertory" {
+  description = "Path and filename inside the bucket"
+  type    = string
+  default = "My-First-S3/terraform.tfstate1"
+}
+
 
 variable "image_name" {
   description = "Image available in Infomaniak"
@@ -52,6 +72,7 @@ variable "network_name" {
 }
 
 variable "keypair_name" {
+  description = "Name of the key pair created in infomaniak"
   type    = string
   default = "opentofu-key"
 }
