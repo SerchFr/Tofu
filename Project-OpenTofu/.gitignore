@@ -2,3 +2,5 @@ terraform.tfvars
 *.tfstate
 *.tfstate.*
 .terraform/
+OpenTofu-clouds.yaml
+Reader-clouds.yaml
