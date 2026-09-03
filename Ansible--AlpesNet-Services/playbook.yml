@@ -15,3 +15,4 @@
     - docker-nginx
     - nginx
     - docker-LDAP
+    - docker-LAM
