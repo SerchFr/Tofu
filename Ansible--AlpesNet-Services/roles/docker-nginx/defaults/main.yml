@@ -1,2 +1,4 @@
 ---
-# defaults file for roles/docker-nginx
+nginx_container_name: nginx-default
+nginx_image_tag: latest
+nginx_host_port: 81

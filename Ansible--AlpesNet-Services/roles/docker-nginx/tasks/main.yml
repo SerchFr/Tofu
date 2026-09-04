@@ -1,2 +1,19 @@
 ---
-# tasks file for roles/docker-nginx
+- name: S'assurer que le service Docker tourne
+  service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Lancer le conteneur nginx (image officielle, config par défaut) via la commande docker
+  command: >
+    docker run -d
+    --name {{ nginx_container_name }}
+    --restart unless-stopped
+    -p {{ nginx_host_port }}:80
+    nginx:{{ nginx_image_tag }}
+  register: nginx_run
+  failed_when:
+    - nginx_run.rc != 0
+    - "'is already in use' not in nginx_run.stderr"
+  changed_when: nginx_run.rc == 0
