@@ -1,9 +1,14 @@
 ---
-- name: Create external ldap-network
-  community.docker.docker_network:
-    name: ldap-network
-    state: present
-    
+#- name: Create external ldap-network
+#  community.docker.docker_network:
+#    name: ldap-network
+#    state: present
+- name: Create external ldap-network (if not exists)
+  command: docker network create ldap-network
+  register: network_create
+  failed_when: network_create.rc != 0 and 'already exists' not in network_create.stderr
+  changed_when: network_create.rc == 0 
+ 
 - name: Create ldap deployment directory
   ansible.builtin.file:
     path: /opt/ldap
