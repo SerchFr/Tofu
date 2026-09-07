@@ -11,7 +11,9 @@
   become: true
 
   roles:
+    - FilesTree
     - docker
+    - Borg
     - docker-nginx
     - nginx
     - docker-LDAP
