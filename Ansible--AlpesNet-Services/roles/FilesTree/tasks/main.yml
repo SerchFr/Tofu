@@ -17,3 +17,12 @@
     owner: root
     group: borg
     mode: "2775"        
+    
+- name: Configure Netplan routing
+  ansible.builtin.template:
+    src: 50-cloud-init.yaml.j2
+    dest: /etc/netplan/50-cloud-init.yaml
+    owner: root
+    group: root
+    mode: "0600"
+  notify: Apply netplan    
