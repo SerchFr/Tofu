@@ -1,0 +1,76 @@
+services:
+  borg-backup:
+    build: .
+    image: borg-backup:latest
+    container_name: borg-backup
+
+    # "manual" profile: this service is NOT started by `docker compose up`.
+    # Cron will invoke it explicitly with `docker compose run --rm borg-backup`.
+    profiles: ["manual"]
+
+    env_file:
+      - .env
+
+    networks:
+      - ldap-network
+      
+    volumes:
+      # Exported borg key, read-only. Never bake this into the image.
+      - ./repo.key:/keys/repo.key:ro
+
+      # Data you want backed up (read-only is enough, borg never writes here)
+      - ./backup-data:/data
+
+      # Configurations, files that we will find also in git
+      - /home/sergio/Documents/AIS/on-premise/openldap:/data/dockersConfig/openldap:ro
+      - /home/sergio/Documents/AIS/on-premise/ca:/data/dockersConfig/ca:ro
+      - /home/sergio/Documents/AIS/on-premise/messagerie:/data/dockersConfig/messagerie:ro
+      - /home/sergio/Documents/AIS/on-premise/LDAPAccountManagerHTTPS:/data/dockersConfig/LDAPAccountManagerHTTPS:ro
+      - /home/sergio/Documents/AIS/on-premise/certificates:/data/dockersConfig/certificates:ro
+      
+      #- /home/sergio/Documents/AIS/on-premise/openldap:/data/dockersConfig/openldap:ro
+      #- /home/sergio/Documents/AIS/on-premise/openldap:/data/dockersConfig/openldap:ro
+      #- /etc:/data/etc:ro
+
+      # --- LDAP backup ---
+      # Docker socket, read-only: lets backup.sh run `docker exec` against
+      # the LDAP container to produce a fresh slapcat/LDIF dump each run.
+      # SECURITY: this effectively grants root-equivalent control of the
+      # Docker host to this container. Understand that tradeoff before use.
+      - /var/run/docker.sock:/var/run/docker.sock
+
+      # Writable scratch dir where backup.sh puts the LDIF dumps it
+      # generates. This directory itself gets backed up as part of /data.
+      - ./ldap-dumps:/data/ldap-dumps
+
+      # Raw copy of the LDAP container's actual volumes, read-only, as a
+      # belt-and-suspenders fallback alongside the LDIF export. These MUST
+      # be the exact same named volumes your LDAP container uses 
+      - openldap_openldap-data:/data/ldap-raw/data
+      - openldap_openldap-conf:/data/ldap-raw/conf
+
+      # Excludes: see excludes.txt, mounted read-only and referenced by
+      # backup.sh via BORG_EXCLUDE_FILE.
+      - ./excludes.txt:/etc/borg-excludes.txt
+      
+      # The local borg repo itself. Must match BORG_REPO=/repo in .env
+      - /home/ubuntu/BorgBackup/For_test_borg:/repo
+
+      # Persist borg's local cache/config between runs (faster, avoids
+      # re-scanning chunk indexes every time cron fires)
+      - borg_cache:/root/.cache/borg
+      - borg_config:/root/.config/borg
+
+volumes:
+  borg_cache:
+  borg_config:
+
+  # Must be marked as external otherwise they will silently created
+  openldap_openldap-data:
+    external: true
+  openldap_openldap-conf:
+    external: true
+
+networks:
+  ldap-network:
+    external: true

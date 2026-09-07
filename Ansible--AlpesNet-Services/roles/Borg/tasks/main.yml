@@ -1,0 +1,79 @@
+---
+- name: Create Borg directory
+  ansible.builtin.file:
+    path: /opt/borg
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Copy Dockerfile
+  ansible.builtin.copy:
+    src: Dockerfile
+    dest: /opt/borg/Dockerfile
+    owner: root
+    group: root
+    mode: "0644"
+    
+- name: Copy .env file
+  ansible.builtin.copy:
+    src: .env
+    dest: /opt/borg/.env
+    owner: root
+    group: root
+    mode: "0644"
+    
+- name: Copy backup.sh file
+  ansible.builtin.copy:    
+    src: backup.sh
+    dest: /opt/borg/backup.sh
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Copy keys file
+  ansible.builtin.copy:    
+    src: repo.key
+    dest: /opt/borg/repo.key
+    owner: root
+    group: root
+    mode: "0644"
+    
+- name: Deploy Borg compose file
+  ansible.builtin.copy:
+    src: docker-compose.yml
+    dest: /opt/borg/docker-compose.yml
+    owner: root
+    group: root
+    mode: "0644"
+    
+    
+    
+#- name: List Borg repository
+#  community.docker.docker_container:
+#    name: borg-list
+#    image: borg-backup:latest
+#    command: list /repo
+#    volumes:
+#      - /home/ubuntu/BorgBackup/For_test_borg:/repo:ro
+#      - /home/ubuntu/BorgBackup/repo.key:/keys/repo.key:ro
+#    env:
+#      BORG_KEY_FILE: /keys/repo.key
+#      BORG_PASSPHRASE: "{{ borg_passphrase }}"
+#    auto_remove: true
+    
+#- name: Extract Borg backup
+#  community.docker.docker_container:
+#    name: borg-restore
+#    image: borg-backup:latest
+#    command: >-
+#      extract /repo::AlpesNet-2026-09-07_08-09-47
+#    volumes:
+#      - /home/ubuntu/BorgBackup/For_test_borg:/repo:ro
+#      - /home/ubuntu/BorgBackup/repo.key:/keys/repo.key:ro
+#      - /tmp/restore-test:/restore
+#    working_dir: /restore
+#    env:
+#      BORG_KEY_FILE: /keys/repo.key
+#      BORG_PASSPHRASE: "{{ borg_passphrase }}"
+#    auto_remove: true
