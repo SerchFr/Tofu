@@ -1,0 +1,19 @@
+--- 
+- name: Ensure borg group exists
+  ansible.builtin.group:
+    name: borg
+    state: present
+
+- name: Add ubuntu to borg group
+  ansible.builtin.user:
+    name: ubuntu
+    groups: borg
+    append: true
+
+- name: Create folder with the borgbackup
+  ansible.builtin.file:
+    path: BorgBackup
+    state: directory
+    owner: root
+    group: borg
+    mode: "2775"        
