@@ -51,6 +51,8 @@ resource "openstack_compute_instance_v2" "vm" {
   network {
      name = openstack_networking_network_v2.private_net.name
   }
+  user_data = file("${path.module}/cloud-init-network-fix.yaml")
+  
 }
 
 ## ---------------------------------------------------------------
@@ -141,7 +143,8 @@ resource "openstack_compute_instance_v2" "mail_vm" {
   network {
     name = openstack_networking_network_v2.private_net.name
   }
-
+  
+  user_data = file("${path.module}/cloud-init-network-fix.yaml")
   #depends_on = [openstack_networking_subnet_v2.private_subnet]
 }
 

@@ -1,0 +1,11 @@
+# cloud-init-network-fix.yaml
+#cloud-config
+write_files:
+  - path: /etc/systemd/system/systemd-networkd-wait-online.service.d/override.conf
+    content: |
+      [Service]
+      ExecStart=
+      ExecStart=/lib/systemd/systemd-networkd-wait-online --any --timeout=30
+
+runcmd:
+  - systemctl daemon-reload
