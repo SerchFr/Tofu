@@ -1,0 +1,51 @@
+---
+- name: Ensure postfix directory exists on remote
+  file:
+    path: /opt/postfix
+    state: directory
+    owner: ubuntu
+    mode: "0755"
+
+- name: Ensure postfix/config directory exists on remote
+  file:
+    path: /opt/postfix/config
+    state: directory
+    owner: ubuntu
+    mode: "0755"
+
+- name: Copy Postfix build/runtime files
+  copy:
+    src: "{{ item }}"
+    dest: "/opt/postfix/{{ item }}"
+    mode: "0644"
+  loop:
+    - Dockerfile
+    - docker-compose.yml
+    - master.cf
+
+- name: Copy entrypoint.sh (needs exec bit)
+  copy:
+    src: entrypoint.sh
+    dest: /opt/postfix/entrypoint.sh
+    mode: "0755"
+
+- name: Copy config/ files
+  copy:
+    src: "config/{{ item }}"
+    dest: "/opt/postfix/config/{{ item }}"
+    mode: "0644"
+  loop:
+    - ldap-virtual-mailbox.cf
+    - main.cf
+    - vmailbox
+
+- name: Ensure mail-net Docker network exists
+  community.docker.docker_network:
+    name: mail-net
+    state: present
+    
+- name: Build and start Postfix container
+  community.docker.docker_compose_v2:
+    project_src: /opt/postfix
+    state: present
+    build: policy

@@ -1,0 +1,45 @@
+services:
+  roundcube:
+    #image: roundcube/roundcubemail:latest
+    build:
+      context: ./apache
+      
+    container_name: roundcube
+  
+    ports:
+    - "8081:80"
+    - "8443:443"
+
+    environment:
+      ROUNDCUBEMAIL_DEFAULT_HOST: dovecot
+      ROUNDCUBEMAIL_DEFAULT_PORT: 143
+      ROUNDCUBEMAIL_SMTP_SERVER: postfix
+      ROUNDCUBEMAIL_SMTP_PORT: 25
+      ROUNDCUBEMAIL_DB_TYPE: sqlite
+      LDAP_HOST: 10.10.0.17   # LDAP VM's private IP
+      
+    volumes:
+      - roundcube-data:/var/roundcube/db
+      
+      # Certificates
+      - ./ssl/mail.crt:/etc/ssl/roundcube/mail.crt:ro
+      - ./ssl/mail.key:/etc/ssl/roundcube/mail.key:ro
+ 
+      # Apache SSL configuration
+      - ./apache/roundcube-ssl.conf:/etc/apache2/sites-available/roundcube-ssl.conf:ro
+      
+    restart: unless-stopped
+
+    networks:
+      - mail-net
+#      - ldap-network
+networks:
+  mail-net:
+    external: true
+#networks:
+#  ldap-network:
+#    external: true
+      
+volumes:
+  roundcube-data:
+

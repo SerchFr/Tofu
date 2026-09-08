@@ -1,0 +1,59 @@
+compatibility_level = 3.6
+
+myhostname = mail.AlpesNet.local
+mydomain = AlpesNet.local
+myorigin = $mydomain
+
+inet_interfaces = all
+inet_protocols = ipv4
+
+mydestination = localhost
+
+mynetworks = 127.0.0.0/8
+
+#home_mailbox = Maildir/
+
+#smtpd_recipient_restrictions =
+#     permit_mynetworks,
+#     reject_unauth_destination
+     
+virtual_mailbox_domains = AlpesNet.local
+virtual_mailbox_base = /var/mail/vhosts
+
+
+
+# Utiliser le fichier des utilisateurs à la main
+#virtual_mailbox_maps = texthash:/etc/postfix/vmailbox
+
+# Utiliser ldap
+virtual_mailbox_maps = ldap:/etc/postfix/ldap-virtual-mailbox.cf
+
+
+
+virtual_uid_maps = static:5000
+virtual_gid_maps = static:5000
+virtual_minimum_uid = 100
+
+virtual_transport = virtual
+
+maillog_file = /dev/stdout
+
+#smtpd_tls_cert_file=/etc/ssl/mail/mail.crt
+#smtpd_tls_key_file=/etc/ssl/mail/mail.key
+
+#smtpd_sasl_type = dovecot
+#smtpd_sasl_path = private/auth
+
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private/auth
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_security_options = noanonymous
+broken_sasl_auth_clients = yes
+
+# no certs yet, so allow AUTH over plaintext connections
+smtpd_tls_auth_only = no
+
+smtpd_recipient_restrictions =
+    permit_sasl_authenticated,
+    permit_mynetworks,
+    reject_unauth_destination

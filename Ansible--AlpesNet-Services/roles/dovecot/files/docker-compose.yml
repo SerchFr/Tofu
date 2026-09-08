@@ -1,0 +1,50 @@
+services:
+  dovecot:
+    build: .
+    container_name: dovecot
+    hostname: mail.AlpesNet.local
+
+    env_file:
+      - ./config/.env
+
+    environment:
+      - LDAP_HOST=10.10.0.17   # LDAP VM's private IP
+      
+    ports:
+      - "1143:143"
+
+    volumes:
+      - ./config/dovecot.conf:/etc/dovecot/dovecot.conf:ro
+      # Pour une connexion manuelle
+      #- ./config/passwd:/etc/dovecot/passwd:ro
+      # Pour utiliser ldap
+      #- ./config/dovecot-ldap.conf.ext:/etc/dovecot/dovecot-ldap.conf.ext:ro
+      - ./config/dovecot-ldap.conf.ext.template:/etc/dovecot/dovecot-ldap.conf.ext.template:ro
+      
+      #- maildata:/var/mail/vhosts
+      - mail_vhosts_data:/var/mail/vhosts   # was: dovecot_maildata:/var/mail/vhosts
+
+      - postfix-sasl:/var/spool/postfix/private
+ 
+    restart: unless-stopped
+  
+    networks:
+      - mail-net
+#      - ldap-network
+
+networks:
+  mail-net:
+    external: true
+#networks:
+#  ldap-network:
+#    external: true
+
+volumes:
+  postfix-sasl:
+    name: postfix-sasl
+    external: true
+  mail_vhosts_data:
+    name: mail_vhosts_data 
+    external: true
+    
+#  maildata:

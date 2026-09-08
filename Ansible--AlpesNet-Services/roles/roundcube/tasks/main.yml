@@ -1,0 +1,38 @@
+---
+- name: Ensure roundcube directory exists on remote
+  file:
+    path: /opt/roundcube
+    state: directory
+    owner: ubuntu
+    mode: "0755"
+
+- name: Ensure roundcube/apache directory exists on remote
+  file:
+    path: /opt/roundcube/apache
+    state: directory
+    owner: ubuntu
+    mode: "0755"
+
+- name: Copy Roundcube compose + config files
+  copy:
+    src: "{{ item }}"
+    dest: "/opt/roundcube/{{ item }}"
+    mode: "0644"
+  loop:
+    - docker-compose.yml
+    - config.inc.php
+
+- name: Copy apache/ files
+  copy:
+    src: "apache/{{ item }}"
+    dest: "/opt/roundcube/apache/{{ item }}"
+    mode: "0644"
+  loop:
+    - Dockerfile
+    - roundcube-ssl.conf
+
+- name: Build and start Roundcube container
+  community.docker.docker_compose_v2:
+    project_src: /opt/roundcube
+    state: present
+    build: always

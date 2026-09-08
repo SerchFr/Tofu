@@ -1,0 +1,11 @@
+#hosts = openldap:389    # on premise
+hosts = 10.10.0.17:389  # infomaniak
+dn = cn=admin,dc=AlpesNet,dc=local
+dnpass ="${dnpass_passwword}"
+ldap_version = 3
+base = ou=people,dc=AlpesNet,dc=local
+scope = subtree
+auth_bind = yes
+pass_filter = (&(objectClass=inetOrgPerson)(uid=%n))
+user_filter = (&(objectClass=inetOrgPerson)(uid=%n))
+

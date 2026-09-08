@@ -25,8 +25,10 @@ services:
     restart: unless-stopped
     
     ports:
-      - "389:3890"
-      - "636:6360"
+      #- "389:3890"
+      #- "636:6360"
+      - "10.10.0.17:389:3890"    # bind only to the private interface, not 0.0.0.0
+      - "10.10.0.17:636:6360"    # if you use LDAPS
       
     networks:
       - ldap-network

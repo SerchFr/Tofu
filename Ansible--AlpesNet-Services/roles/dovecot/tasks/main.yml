@@ -1,0 +1,46 @@
+---
+- name: Ensure dovecot directory exists on remote
+  file:
+    path: /opt/dovecot
+    state: directory
+    owner: ubuntu
+    mode: "0755"
+
+- name: Ensure dovecot/config directory exists on remote
+  file:
+    path: /opt/dovecot/config
+    state: directory
+    owner: ubuntu
+    mode: "0755"
+
+- name: Copy Dovecot build/runtime files
+  copy:
+    src: "{{ item }}"
+    dest: "/opt/dovecot/{{ item }}"
+    mode: "0644"
+  loop:
+    - Dockerfile
+    - docker-compose.yml
+
+- name: Copy entrypoint.sh (needs exec bit)
+  copy:
+    src: entrypoint.sh
+    dest: /opt/dovecot/entrypoint.sh
+    mode: "0755"
+
+- name: Copy config/ files
+  copy:
+    src: "config/{{ item }}"
+    dest: "/opt/dovecot/config/{{ item }}"
+    mode: "0644"
+  loop:
+    - dovecot.conf
+    - dovecot-ldap.conf.ext.template
+    - .env
+
+
+- name: Build and start Dovecot container
+  community.docker.docker_compose_v2:
+    project_src: /opt/dovecot
+    state: present
+    build: policy

@@ -1,0 +1,44 @@
+services:
+  postfix:
+    build: .
+    container_name: postfix
+    hostname: mail.AlpesNet.local
+
+    environment:
+      - LDAP_HOST=10.10.0.17   # LDAP VM's private IP
+      
+    ports:
+    - "2525:25"
+
+    volumes:
+    - mail_vhosts_data:/var/mail/vhosts   # was: postfix_maildata:/var/mail/vhosts
+    - ./config/main.cf:/etc/postfix/main.cf:ro
+    - ./master.cf:/etc/postfix/master.cf
+    # pour utiliser les utilisateurs à la main
+    #- ./config/vmailbox:/etc/postfix/vmailbox:ro
+    # Pour utilsier ldap
+    - ./config/ldap-virtual-mailbox.cf:/etc/postfix/ldap-virtual-mailbox.cf:ro
+    #- maildata:/var/mail/vhosts
+    - postfix-sasl:/var/spool/postfix/private
+
+    restart: unless-stopped
+
+    networks:
+     - mail-net
+    #  - ldap-network
+
+#networks:
+#  ldap-network:
+#    external: true
+networks:
+  mail-net:
+    external: true
+    
+volumes:
+  postfix-sasl:
+    name: postfix-sasl
+#    external: true
+  mail_vhosts_data:
+    name: mail_vhosts_data 
+#    external: true
+#  maildata:
