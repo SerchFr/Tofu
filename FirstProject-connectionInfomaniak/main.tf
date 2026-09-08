@@ -73,7 +73,7 @@ resource "openstack_networking_subnet_v2" "private_subnet" {
   no_gateway  = true   # <-- prevents Neutron from auto-assigning 10.10.0.1 as gateway
   dns_nameservers = [] 
 }
-#
+
 ## ---------------------------------------------------------------
 ## Security group for internal traffic (LDAP + whatever mail needs)
 ## ---------------------------------------------------------------
@@ -82,7 +82,7 @@ resource "openstack_networking_subnet_v2" "private_subnet" {
 #  description          = "Traffic between LDAP and mail VM"
 #  delete_default_rules = true
 #}
-#
+
 ## Allow LDAP (389) and LDAPS (636) only from inside the private subnet
 #resource "openstack_networking_secgroup_rule_v2" "allow_ldap" {
 #  direction         = "ingress"
@@ -124,21 +124,26 @@ resource "openstack_networking_subnet_v2" "private_subnet" {
 #  name       = var.keypair_name
 #  public_key = file(var.ssh_public_key)  # your public key
 #}
-#
-#resource "openstack_compute_instance_v2" "mail_vm" {
-#  name            = "mail-server"
-#  image_name      = var.image_name
-#  flavor_name     = var.flavor_name
-#  key_pair        = openstack_compute_keypair_v2.vm.name
-#  #security_groups = [openstack_networking_secgroup_v2.internal_sg.name]
-#  security_groups = ["default"]
-#  
-#  network {
-#    name = openstack_networking_network_v2.private_net.name
-#  }
-#
-#  depends_on = [openstack_networking_subnet_v2.private_subnet]
-#}
+
+resource "openstack_compute_instance_v2" "mail_vm" {
+  name            = "mail-server"
+  image_name      = var.image_name
+  flavor_name     = var.flavor_name
+  key_pair        = openstack_compute_keypair_v2.vm.name
+  #security_groups = [openstack_networking_secgroup_v2.internal_sg.name]
+  security_groups = ["default"]
+  
+  # ext net1
+  network {
+    name = var.network_name
+  }
+  
+  network {
+    name = openstack_networking_network_v2.private_net.name
+  }
+
+  #depends_on = [openstack_networking_subnet_v2.private_subnet]
+}
 
 
 
