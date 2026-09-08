@@ -1,0 +1,10 @@
+---  
+- name: Deploy mail stack
+  hosts: mail        
+  become: true
+  roles:
+    - FilesTree
+    - docker
+    - postfix
+    - dovecot
+    - roundcube
