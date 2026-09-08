@@ -16,7 +16,7 @@ services:
       ROUNDCUBEMAIL_SMTP_SERVER: postfix
       ROUNDCUBEMAIL_SMTP_PORT: 25
       ROUNDCUBEMAIL_DB_TYPE: sqlite
-      LDAP_HOST: 10.10.0.17   # LDAP VM's private IP
+      LDAP_HOST: 10.10.0.239   # LDAP VM's private IP
       
     volumes:
       - roundcube-data:/var/roundcube/db

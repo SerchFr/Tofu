@@ -1,5 +1,5 @@
 #hosts = openldap:389    # on premise
-hosts = 10.10.0.17:389  # infomaniak
+hosts = 10.10.0.239:389  # infomaniak
 dn = cn=admin,dc=AlpesNet,dc=local
 dnpass ="${dnpass_passwword}"
 ldap_version = 3

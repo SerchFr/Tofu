@@ -1,12 +1,12 @@
 #server_host = ldap://openldap:389    # on premise 
-server_host = 10.10.0.17:389         # infomaniak
+server_host = 10.10.0.239:389         # infomaniak
 ##server_host = 10.10.0.135
 ##server_port = 3890
 version = 3
 search_base = ou=people,dc=AlpesNet,dc=local
 bind = yes
 bind_dn = cn=admin,dc=AlpesNet,dc=local
-bind_pw = lwPOmWd/rQx9aKVX
+bind_pw = F9WrgzA9KouldRx0
 query_filter = (&(objectClass=inetOrgPerson)(mail=%s))
 result_attribute = mail
 result_format = alpesnet.local/%U/
