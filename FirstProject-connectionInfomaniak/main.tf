@@ -73,7 +73,7 @@ resource "openstack_networking_subnet_v2" "private_subnet" {
   # you'll need a router with an external gateway — see note below.
   enable_dhcp = true
   no_gateway  = true   # <-- prevents Neutron from auto-assigning 10.10.0.1 as gateway
-  dns_nameservers = [] 
+  #dns_nameservers = [] 
 }
 
 ## ---------------------------------------------------------------
