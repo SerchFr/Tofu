@@ -13,6 +13,29 @@
     owner: ubuntu
     mode: "0755"
 
+
+
+- name: Generate private key for Roundcube
+  community.crypto.openssl_privatekey:
+    path: /opt/roundcube/ssl/mail.key
+    size: 2048
+
+- name: Generate CSR for Roundcube
+  community.crypto.openssl_csr:
+    path: /opt/roundcube/ssl/mail.csr
+    privatekey_path: /opt/roundcube/ssl/mail.key
+    common_name: mail.alpesnet.local
+
+- name: Generate self-signed certificate for Roundcube
+  community.crypto.x509_certificate:
+    path: /opt/roundcube/ssl/mail.crt
+    privatekey_path: /opt/roundcube/ssl/mail.key
+    csr_path: /opt/roundcube/ssl/mail.csr
+    provider: selfsigned
+    selfsigned_create_subject_key_identifier: create_if_not_provided
+    
+    
+
 - name: Copy Roundcube compose + config files
   copy:
     src: "{{ item }}"

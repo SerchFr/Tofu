@@ -1,9 +1,24 @@
 ---  
 - name: Deploy mail stack
-  hosts: mail        
+  hosts: mail
   become: true
+  gather_facts: false   # <-- désactivé au démarrage du play
+    
+  pre_tasks:
+    - name: Ensure hostname resolves locally (avoids sudo/DNS hang)
+      lineinfile:
+        path: /etc/hosts
+        line: "127.0.1.1 mail-server"
+        state: present
+      vars:
+        ansible_become_timeout: 30    
+    
+    - name: Gather facts now that sudo is fast
+      setup:
+      
   roles:
-    - FilesTree
+    #- Network-fix
+    #- FilesTree
     - docker
     - postfix
     - dovecot

@@ -10,7 +10,22 @@
   hosts: webserver
   become: true
 
+  gather_facts: false   # <-- désactivé au démarrage du play
+    
+  pre_tasks:
+    - name: Ensure hostname resolves locally (avoids sudo/DNS hang)
+      lineinfile:
+        path: /etc/hosts
+        line: "127.0.1.1 VM_Test_nginx"
+        state: present
+      vars:
+        ansible_become_timeout: 30    
+    
+    - name: Gather facts now that sudo is fast
+      setup:
+      
   roles:
+    - Network-fix
     - FilesTree
     - docker
     - Borg
