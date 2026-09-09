@@ -14,7 +14,13 @@
     mode: "0755"
 
 
-
+- name: Ensure roundcube/apache directory exists on remote
+  file:
+    path: /opt/roundcube/ssl
+    state: directory
+    owner: ubuntu
+    mode: "0755"
+    
 - name: Generate private key for Roundcube
   community.crypto.openssl_privatekey:
     path: /opt/roundcube/ssl/mail.key
